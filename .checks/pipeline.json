@@ -1,0 +1,9 @@
+{
+  "required_checks": [
+    {"name": "lint", "command": ["{python}", "-m", "ruff", "check", "."], "timeout_seconds": 60},
+    {"name": "format", "command": ["{python}", "-m", "ruff", "format", "--check", "."], "timeout_seconds": 60},
+    {"name": "unit", "command": ["{python}", "-m", "pytest", "-q", "tests/unit"], "timeout_seconds": 120},
+    {"name": "integration", "command": ["{python}", "-m", "pytest", "-q", "tests/integration"], "timeout_seconds": 180},
+    {"name": "compose", "command": ["docker", "compose", "config", "--quiet"], "timeout_seconds": 30}
+  ]
+}

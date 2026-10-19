@@ -1,0 +1,39 @@
+name: checks
+on: [push, pull_request]
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: oborot
+          POSTGRES_PASSWORD: oborot
+          POSTGRES_DB: oborot
+        ports: ["55432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U oborot -d oborot"
+          --health-interval 2s --health-timeout 3s --health-retries 30
+      redis:
+        image: redis:7.4-alpine
+        ports: ["56379:6379"]
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 2s --health-timeout 3s --health-retries 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: astral-sh/setup-uv@v10
+        with:
+          version: "0.13.1"
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+      - run: uv sync --locked --extra dev
+      - run: uv run --locked --extra dev python scripts/checks/verify.py --project .
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: verification
+          path: tmp/verify-latest.json

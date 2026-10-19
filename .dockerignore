@@ -1,0 +1,10 @@
+.git
+.venv
+.idea
+.worktrees
+__pycache__
+*.egg-info
+.env
+tmp
+tests
+docs

@@ -1,0 +1,1 @@
+"""Inbound inventory event consumption."""
